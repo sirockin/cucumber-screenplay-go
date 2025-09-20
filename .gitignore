@@ -3,3 +3,4 @@ standards/
 claude.md
 bin
 .vscode/
+node_modules/

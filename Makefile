@@ -7,61 +7,64 @@ help: ## Show this help message
 
 # Individual test targets
 test-domain: ## Run application unit tests (fastest)
-	go test -v -run TestApplication ./acceptance
+	cd acceptance && go test -v -run TestApplication .
 
 test-http-inprocess: ## Run in-process HTTP integration tests
-	go test -v -run TestHTTPInProcess ./acceptance
+	cd acceptance && go test -v -run TestHTTPInProcess .
 
 test-http-executable: ## Run real server executable tests
-	go test -v -run TestHttpExecutable ./acceptance
+	cd acceptance && go test -v -run TestHttpExecutable .
 
 test-http-docker: ## Run Docker container tests (slowest)
-	go test -v -run TestHttpDocker ./acceptance
+	cd acceptance && go test -v -run TestHttpDocker .
 
 test-ui: ## Run UI tests with frontend and API containers (requires Docker)
-	go test -v -run TestUI ./acceptance
+	cd acceptance && go test -v -run TestUI .
 
 # Test suites
 test-fast: ## Run fast tests (application + in-process HTTP)
-	go test -v -run "TestApplication|TestHTTPInProcess" ./acceptance
+	cd acceptance && go test -v -run "TestApplication|TestHTTPInProcess" .
 
 test-integration: ## Run all integration tests (excluding Docker and UI)
-	go test -v -run "TestHTTPInProcess|TestHttpExecutable" ./acceptance
+	cd acceptance && go test -v -run "TestHTTPInProcess|TestHttpExecutable" .
 
 test-all: ## Run all tests including Docker and UI (full suite)
-	go test -v ./acceptance
+	cd acceptance && go test -v .
 
 test: test-fast ## Default test target (fast tests only)
 
 # Test with short mode (unit tests only)
 test-short: ## Run tests in short mode (skips slow integration tests)
-	go test -short -v ./acceptance
+	cd acceptance && go test -short -v .
 
 # Build targets
 build: ## Build the server binary
-	go build -o bin/server ./cmd/server
+	cd back-end && go build -o bin/server ./cmd/server
 
 server: build ## Build and run the server
-	./bin/server
+	./back-end/bin/server
 
 # Clean up
 clean: ## Clean build artifacts
-	rm -rf bin/
+	rm -rf back-end/bin/
 
 # Development helpers
 fmt: ## Format Go code
-	go fmt ./...
+	cd back-end && go fmt ./...
+	cd acceptance && go fmt ./...
 
 vet: ## Run go vet
-	go vet ./...
+	cd back-end && go vet ./...
+	cd acceptance && go vet ./...
 
 sec: ## Run security checks with gosec
-	gosec ./...
+	cd back-end && gosec ./...
+	cd acceptance && gosec ./...
 
 lint: fmt vet sec ## Run formatting and vetting
 
 # Coverage
 coverage: ## Run tests with coverage
-	go test -coverprofile=coverage.out ./acceptance
-	go tool cover -html=coverage.out -o coverage.html
-	@echo "Coverage report generated: coverage.html"
+	cd acceptance && go test -coverprofile=coverage.out .
+	cd acceptance && go tool cover -html=coverage.out -o coverage.html
+	@echo "Coverage report generated: acceptance/coverage.html"

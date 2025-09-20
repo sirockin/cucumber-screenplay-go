@@ -2,8 +2,8 @@ package application
 
 import (
 	"github.com/sirockin/cucumber-screenplay-go/acceptance/driver"
-	"github.com/sirockin/cucumber-screenplay-go/internal/domain/application"
-	"github.com/sirockin/cucumber-screenplay-go/internal/domain/entities"
+	"github.com/sirockin/cucumber-screenplay-go/back-end/pkg/domain/application"
+	"github.com/sirockin/cucumber-screenplay-go/back-end/pkg/domain/entities"
 )
 
 // New creates a new domain test driver that wraps the actual domain

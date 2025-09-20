@@ -1,7 +1,7 @@
 package driver
 
 import (
-	"github.com/sirockin/cucumber-screenplay-go/internal/domain/entities"
+	"github.com/sirockin/cucumber-screenplay-go/back-end/pkg/domain/entities"
 )
 
 // AcceptanceTestDriver is our interface to the system under test

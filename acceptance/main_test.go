@@ -16,11 +16,11 @@ import (
 	"testing"
 	"time"
 
-	appdriver "github.com/sirockin/cucumber-screenplay-go/acceptance/driver/application"
+	appdriver "github.com/sirockin/cucumber-screenplay-go/back-end/pkg/driver"
 	httpdriver "github.com/sirockin/cucumber-screenplay-go/acceptance/driver/http"
 	uidriver "github.com/sirockin/cucumber-screenplay-go/acceptance/driver/ui"
-	application "github.com/sirockin/cucumber-screenplay-go/internal/domain/application"
-	httpserver "github.com/sirockin/cucumber-screenplay-go/internal/http"
+	"github.com/sirockin/cucumber-screenplay-go/back-end/internal/domain/application"
+	httpserver "github.com/sirockin/cucumber-screenplay-go/back-end/internal/http"
 
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/network"
@@ -193,8 +193,8 @@ func buildServerExecutable(t *testing.T) string {
 	t.Logf("Building server executable...")
 	cmd := exec.Command("go", "build", "-o", serverBinary, "./cmd/server")
 
-	// Set working directory to project root (parent of features)
-	cmd.Dir = ".."
+	// Set working directory to back-end
+	cmd.Dir = "../back-end"
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
@@ -311,11 +311,11 @@ func startTestContainer(t *testing.T) string {
 		t.Fatalf("Failed to get project root path: %v", err)
 	}
 
-	// Create container request using the deploy/Dockerfile
+	// Create container request using the back-end/Dockerfile
 	req := testcontainers.ContainerRequest{
 		FromDockerfile: testcontainers.FromDockerfile{
-			Context:    projectRoot,
-			Dockerfile: "./deploy/Dockerfile",
+			Context:    filepath.Join(projectRoot, "back-end"),
+			Dockerfile: "Dockerfile",
 		},
 		ExposedPorts: []string{"8080/tcp"},
 		WaitingFor:   wait.ForLog("API endpoints"),
@@ -399,8 +399,8 @@ func startUITestEnvironment(t *testing.T) string {
 	apiContainer, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: testcontainers.ContainerRequest{
 			FromDockerfile: testcontainers.FromDockerfile{
-				Context:    projectRoot,
-				Dockerfile: "./deploy/Dockerfile",
+				Context:    filepath.Join(projectRoot, "back-end"),
+				Dockerfile: "Dockerfile",
 			},
 			ExposedPorts: []string{"8080/tcp"},
 			WaitingFor:   wait.ForLog("API endpoints"),
@@ -427,7 +427,7 @@ func startUITestEnvironment(t *testing.T) string {
 	frontendContainer, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: testcontainers.ContainerRequest{
 			FromDockerfile: testcontainers.FromDockerfile{
-				Context:    filepath.Join(projectRoot, "web"),
+				Context:    filepath.Join(projectRoot, "front-end"),
 				Dockerfile: "Dockerfile",
 			},
 			ExposedPorts: []string{"80/tcp"},

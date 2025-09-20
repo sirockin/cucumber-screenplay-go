@@ -40,8 +40,11 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-go-
 
-    - name: Download dependencies
-      run: go mod download
+    - name: Download backend dependencies
+      run: cd back-end && go mod download
+
+    - name: Download acceptance test dependencies
+      run: cd acceptance && go mod download
 
     - name: Run fast tests
       run: make test-fast
@@ -81,8 +84,11 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: Download dependencies
-      run: go mod download
+    - name: Download backend dependencies
+      run: cd back-end && go mod download
+
+    - name: Download acceptance test dependencies
+      run: cd acceptance && go mod download
 
     - name: Run domain tests
       run: make test-domain
@@ -127,9 +133,9 @@ jobs:
 
     - name: Run go fmt check
       run: |
-        if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
+        if [ "$(gofmt -s -l back-end acceptance | wc -l)" -gt 0 ]; then
           echo "Code is not formatted. Please run 'make fmt'"
-          gofmt -s -l .
+          gofmt -s -l back-end acceptance
           exit 1
         fi
 
@@ -174,21 +180,24 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-go-
 
-    - name: Download dependencies
-      run: go mod download
+    - name: Download backend dependencies
+      run: cd back-end && go mod download
+
+    - name: Download acceptance test dependencies
+      run: cd acceptance && go mod download
 
     - name: Build server binary
-      run: make build
+      run: cd back-end && make build
 
     - name: Verify binary works
       run: |
-        timeout 10s ./bin/server -port=9999 &
+        timeout 10s ./back-end/bin/server -port=9999 &
         sleep 2
         curl -f http://localhost:9999/accounts || true
-        pkill -f "./bin/server" || true
+        pkill -f "./back-end/bin/server" || true
 
     - name: Build Docker image
-      run: docker build -f deploy/Dockerfile -t test-image .
+      run: docker build -f back-end/Dockerfile -t test-image back-end
 
     - name: Test Docker image
       run: |

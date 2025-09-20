@@ -7,7 +7,7 @@ import (
 
 	"github.com/playwright-community/playwright-go"
 	"github.com/sirockin/cucumber-screenplay-go/acceptance/driver"
-	"github.com/sirockin/cucumber-screenplay-go/internal/domain/entities"
+	"github.com/sirockin/cucumber-screenplay-go/back-end/pkg/domain/entities"
 )
 
 type AcceptanceTestDriver struct {
